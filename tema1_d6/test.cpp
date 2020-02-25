@@ -35,5 +35,33 @@ int main() {
     M4.scale(9, 9);
     assert(getElementsCount(M4) == 81);
 
+    M4 = -M4;
+    cout << M4 << endl;
+
+    Matrix M5(2, 2), M6(2, 2), M7(2, 2), M8(2, 2), M9(2, 2);
+    M5 = 1;
+    M6 = 2;
+    M7 = 3;
+
+    M8 = M5 + M6;
+    M9 = M7 - M7;
+    M5 = 0;
+    assert(M7 == M8);
+    assert(M9 == M5);
+
+    Matrix M10(2, 3), M11(3, 1);
+    in >> M10 >> M11;
+
+    Matrix M12(0, 0);
+    M12 = M10 * M11;
+    cout << M12 << endl;
+
+    Matrix M13(2, 2), M14(2, 2);
+
+    M13 = 2;
+    M13 *= 2;
+    M14 = 4;
+    assert(M13 == M14);
+
     return 0;
 }
