@@ -20,7 +20,7 @@ class Matrix {
         friend std::istream& operator>>(std::istream& in, Matrix& out);
         friend std::ostream& operator<<(std::ostream& out, Matrix& in);
 
-        void scale(const uint64_t rows, const uint64_t cols);
+        void scale(const uint64_t rowsCount, const uint64_t columnsCount);
 
         friend uint64_t getColumnsCount(Matrix& matrix);
         friend uint64_t getRowsCount(Matrix& matrix);
