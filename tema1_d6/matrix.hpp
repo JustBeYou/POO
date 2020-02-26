@@ -5,7 +5,7 @@
 #include <fstream>
 
 
-// Maybe templates would be a thing here, but it's seems like over-engineering
+// Maybe templates would be a thing here, but it seems like over-engineering
 
 typedef double MatrixElementType;
 
