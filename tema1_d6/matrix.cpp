@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <stdexcept>
+#include <functional>
 
 #include "matrix.hpp"
 
@@ -28,7 +29,7 @@ Matrix& Matrix::operator=(const Matrix& other) {
 	return *this;
 }
 
-Matrix& Matrix::operator=(const ElementType element) {
+Matrix& Matrix::operator=(const MatrixElementType element) {
 	for (auto& column: this->rows) {
 		std::fill(column.begin(), column.end(), element);
 	}
@@ -37,7 +38,7 @@ Matrix& Matrix::operator=(const ElementType element) {
 }
 
 
-Matrix::Row& Matrix::operator[](const uint64_t i) {
+Row& Matrix::operator[](const uint64_t i) {
 	return this->rows[i];
 }
 
@@ -115,9 +116,7 @@ Matrix operator+(Matrix& lhs, Matrix& rhs) {
 
 	Matrix result(lhs.rowsCount, lhs.columnsCount);
 	for (uint64_t i = 0; i < lhs.rowsCount; i++) {
-		for (int64_t j = 0; j < lhs.columnsCount; j++) {
-			result[i][j] = lhs[i][j] + rhs[i][j];
-		}
+		result[i] = lhs[i] + rhs[i];
 	}
 
 	return result;
@@ -127,9 +126,7 @@ Matrix& operator+=(Matrix& lhs, Matrix& rhs) {
 	checkIfSameDimensions(lhs, rhs);
 
 	for (uint64_t i = 0; i < lhs.rowsCount; i++) {
-		for (int64_t j = 0; j < lhs.columnsCount; j++) {
-			lhs[i][j] += rhs[i][j];
-		}
+		lhs[i] += rhs[i];
 	}
 
 	return lhs;
@@ -140,9 +137,7 @@ Matrix operator-(Matrix& lhs, Matrix& rhs) {
 
 	Matrix result(lhs.rowsCount, lhs.columnsCount);
 	for (uint64_t i = 0; i < lhs.rowsCount; i++) {
-		for (int64_t j = 0; j < lhs.columnsCount; j++) {
-			result[i][j] = lhs[i][j] - rhs[i][j];
-		}
+		result[i] = lhs[i] - rhs[i];
 	}
 
 	return result;
@@ -151,9 +146,7 @@ Matrix& operator-=(Matrix& lhs, Matrix& rhs) {
 	checkIfSameDimensions(lhs, rhs);
 
 	for (uint64_t i = 0; i < lhs.rowsCount; i++) {
-		for (int64_t j = 0; j < lhs.columnsCount; j++) {
-			lhs[i][j] -= rhs[i][j];
-		}
+		lhs[i] -= rhs[i];
 	}
 
 	return rhs;
@@ -171,7 +164,7 @@ Matrix operator*(Matrix& lhs, Matrix& rhs) {
 	Matrix result(lhs.rowsCount, rhs.columnsCount);
 	for (uint64_t i = 0; i < lhs.rowsCount; i++) {
 		for (uint j = 0; j < rhs.columnsCount; j++) {
-			Matrix::ElementType temporaryResult = 0;
+			MatrixElementType temporaryResult = 0;
 			
 			for (uint k = 0; k < lhs.columnsCount; k++) {
 				temporaryResult += lhs[i][k] * rhs[k][j];
@@ -184,27 +177,27 @@ Matrix operator*(Matrix& lhs, Matrix& rhs) {
 	return result;
 }
 
+Matrix operator*(MatrixElementType lhs, Matrix& rhs) {
+	return rhs * lhs;
+}
+
 Matrix& operator*=(Matrix& lhs, Matrix& rhs) {
 	lhs = lhs * rhs;
 	return lhs;
 }
 
-Matrix operator*(Matrix& lhs, Matrix::ElementType rhs) {
+Matrix operator*(Matrix& lhs, MatrixElementType rhs) {
 	Matrix result(lhs.rowsCount, lhs.columnsCount);
 	for (uint64_t i = 0; i < lhs.rowsCount; i++) {
-		for (int64_t j = 0; j < lhs.columnsCount; j++) {
-			result[i][j] = lhs[i][j] * rhs;
-		}
+		result[i] = lhs[i] * rhs;
 	}
 
 	return result;
 }
 
-Matrix& operator*=(Matrix& lhs, Matrix::ElementType rhs) {
+Matrix& operator*=(Matrix& lhs, MatrixElementType rhs) {
 	for (uint64_t i = 0; i < lhs.rowsCount; i++) {
-		for (int64_t j = 0; j < lhs.columnsCount; j++) {
-			lhs[i][j] *= rhs;
-		}
+		lhs[i] *= rhs;
 	}
 
 	return lhs;
@@ -228,20 +221,109 @@ bool operator!=(Matrix& lhs, Matrix& rhs) {
 }
 
 Matrix operator~(Matrix& matrix) {
-	Matrix inverse(matrix.rowsCount, matrix.columnsCount);
+	if (matrix.rowsCount != matrix.columnsCount) {
+		throw std::invalid_argument("Only square matrices can be inversed.");
+	}
+	uint64_t size = matrix.rowsCount;
 
-	double determinant = matrix.determinant();
+	Matrix matrixCopy(matrix);
+	Matrix inverse(size, size);
+	inverse = 0;
+	for (uint64_t i = 0; i < size; ++i) {
+		inverse[i][i] = 1;
+	}
+
+	// I am using Gauss-Jordan algorithm
+
+	// Step 1: Row echelon form
+	for (uint64_t i = 0; i < size; ++i) {
+		for (uint64_t j = i + 1; j < size; ++j) {
+			double factor = matrixCopy[j][i] / matrixCopy[i][i];
+
+			Row eliminationRow = factor * matrixCopy[i];
+			matrixCopy[j] -= eliminationRow;
+
+			Row inverseEliminationRow = factor * inverse[i];
+			inverse[j] -= inverseEliminationRow;
+		}
+	}
+
+	// Step 2: Diagonal only
+	for (uint64_t i = 0; i < size; ++i) {
+		for (uint64_t j = i + 1; j < size; ++j) {
+			double factor = matrixCopy[size - j - 1][size - i - 1] / matrixCopy[size - i - 1][size - i - 1];
+
+			Row eliminationRow = factor * matrixCopy[size - i - 1];
+			matrixCopy[size - j - 1] -= eliminationRow;
+
+			Row inverseEliminationRow = factor * inverse[size - i - 1];
+			inverse[size - j - 1] -= inverseEliminationRow;
+		}
+	}
+
+	// Step 3: Multiply each line by its inverse factor
+	for (uint64_t i = 0; i < size; ++i) {
+		double factor = 1 / matrixCopy[i][i];
+		matrixCopy[i] *= factor;
+		inverse[i] *= factor;
+	}
+
+	return inverse;
 }
 
-double Matrix::determinant() {
-	if (this->rowsCount != this->columnsCount) {
-		throw std::invalid_argument("Only square matrices can have a determinant");
+// No safety checks as std::vector will throw exceptions anyway
+
+Row operator+(Row& lhs, Row& rhs) {
+	Row result;
+	for (size_t i = 0; i < lhs.size(); ++i) {
+		result.push_back(lhs[i] + rhs[i]);
 	}
 
-	uint64_t size = this->rowsCount;
-	double determinant = 0;
+	return result;
+}
 
-	if (size == 1) {
-		return this->rows[0][0];
+Row& operator+=(Row& lhs, Row& rhs) {
+	for (size_t i = 0; i < lhs.size(); ++i) {
+		lhs[i] += rhs[i];
 	}
+
+	return lhs;
+}
+
+Row operator-(Row& lhs, Row& rhs) {
+	Row result;
+	for (size_t i = 0; i < lhs.size(); ++i) {
+		result.push_back(lhs[i] - rhs[i]);
+	}
+
+	return result;
+}
+
+Row& operator-=(Row& lhs, Row& rhs) {
+	for (size_t i = 0; i < lhs.size(); ++i) {
+		lhs[i] -= rhs[i];
+	}
+
+	return lhs;
+}
+
+Row operator*(Row& lhs, MatrixElementType rhs) {
+	Row result;
+	for (size_t i = 0; i < lhs.size(); ++i) {
+		result.push_back(lhs[i] * rhs);
+	}
+
+	return result;
+}
+
+Row operator*(MatrixElementType lhs, Row& rhs) {
+	return rhs * lhs;
+}
+
+Row& operator*=(Row& lhs, MatrixElementType rhs) {
+	for (size_t i = 0; i < lhs.size(); ++i) {
+		lhs[i] *= rhs;
+	}
+
+	return lhs;
 }

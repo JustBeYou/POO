@@ -4,21 +4,34 @@
 #include <vector>
 #include <fstream>
 
+
+// Maybe templates would be a thing here, but it's seems like over-engineering
+
+typedef double MatrixElementType;
+
+class Row: public std::vector<MatrixElementType> {
+    public:
+        friend Row operator+(Row& lhs, Row& rhs);
+        friend Row& operator+=(Row& lhs, Row& rhs);
+
+        friend Row operator-(Row& lhs, Row& rhs);
+        friend Row& operator-=(Row& lhs, Row& rhs);
+
+        friend Row operator*(Row& lhs, MatrixElementType rhs);
+        friend Row operator*(MatrixElementType lhs, Row& rhs);
+        friend Row& operator*=(Row& lhs, MatrixElementType rhs);
+};
+
 class Matrix {
-    // Maybe templates would be a thing here, but it's seems like over-engineering
-    typedef double ElementType;
-    typedef std::vector<ElementType> Row;
     typedef std::vector<Row> RowsContainer;
 
     public:
         Matrix(const uint64_t rowsCount, const uint64_t columnsCount);
         Matrix(const Matrix& other);
         Matrix& operator=(const Matrix& other);
-        Matrix& operator=(const ElementType element);
+        Matrix& operator=(const MatrixElementType element);
 
         Row& operator[](const uint64_t i);
-
-        double determinant();
 
         friend std::istream& operator>>(std::istream& in, Matrix& out);
         friend std::ostream& operator<<(std::ostream& out, Matrix& in);
@@ -45,8 +58,9 @@ class Matrix {
         friend Matrix operator*(Matrix& lhs, Matrix& rhs);
         friend Matrix& operator*=(Matrix& lhs, Matrix& rhs);
 
-        friend Matrix operator*(Matrix& lhs, ElementType rhs);
-        friend Matrix& operator*=(Matrix& lhs, ElementType rhs);
+        friend Matrix operator*(Matrix& lhs, MatrixElementType rhs);
+        friend Matrix operator*(MatrixElementType lhs, Matrix& rhs);
+        friend Matrix& operator*=(Matrix& lhs, MatrixElementType rhs);
 
         friend bool operator==(Matrix& lhs, Matrix& rhs);
         friend bool operator!=(Matrix& lhs, Matrix& rhs);
