@@ -163,7 +163,7 @@ Matrix operator*(Matrix& lhs, Matrix& rhs) {
 
 	Matrix result(lhs.rowsCount, rhs.columnsCount);
 	for (uint64_t i = 0; i < lhs.rowsCount; i++) {
-		for (uint j = 0; j < rhs.columnsCount; j++) {
+		for (uint64_t j = 0; j < rhs.columnsCount; j++) {
 			MatrixElementType temporaryResult = 0;
 			
 			for (uint k = 0; k < lhs.columnsCount; k++) {
