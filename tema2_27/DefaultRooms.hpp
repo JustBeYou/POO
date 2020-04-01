@@ -3,33 +3,48 @@
 #include "RoomType.hpp"
 #include <cstddef>
 
-class Bedroom: public RoomType {
+class NonSplittableRoom: public RoomType {
     public:
-        Bedroom();
-        Bedroom(const size_t id);
+    NonSplittableRoom(size_t id, size_t availableSpace): RoomType(id, availableSpace, false) {}
 };
 
-class Apartment: public RoomType {
+class SplittableRoom: public RoomType {
     public:
-        Apartment();
-        Apartment(const size_t id);
+    SplittableRoom(size_t id, size_t availableSpace): RoomType(id, availableSpace, true) {}
 };
 
-class Restaurant: public RoomType {
+class FeaturesRoom: public RoomType {
     public:
-        Restaurant();
-        Restaurant(const size_t id, const size_t availableSpace);
+    FeaturesRoom(size_t id, size_t availableSpace, std::vector<std::string> features): 
+        RoomType(id, availableSpace, false, features) {}
 };
 
-class ConferenceRoom: public RoomType {
-    protected:
-        struct ConferenceRoomFeatures {
-            bool hasProjector;
-            bool hasScene;
-        } features;
-
+class BedRoom: public NonSplittableRoom {
     public:
-        ConferenceRoom();
-        ConferenceRoom(const size_t id, const size_t availableSpace, const ConferenceRoomFeatures& features);
-        bool checkAdditionalFeatures(const ConferenceRoomFeatures& features) const;
+    BedRoom(size_t id): NonSplittableRoom(id, 2) {}
+    void read(std::istream& in);
+    void write(std::ostream& out);
+};
+
+
+class Apartment: public NonSplittableRoom {
+    public:
+    Apartment(size_t id): NonSplittableRoom(id, 4) {}
+    void read(std::istream& in);
+    void write(std::ostream& out);
+};
+
+class Restaurant: public SplittableRoom {
+    public:
+    Restaurant(size_t id, size_t availableSpace): SplittableRoom(id, availableSpace) {}
+    void read(std::istream& in);
+    void write(std::ostream& out);
+};
+
+class ConferenceRoom: public FeaturesRoom {
+    public:
+    ConferenceRoom(size_t id, size_t availableSpace, std::vector<std::string> features): 
+        FeaturesRoom(id, availableSpace, features) {}
+    void read(std::istream& in);
+    void write(std::ostream& out);
 };

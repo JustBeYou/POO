@@ -1,23 +1,44 @@
 #include "DefaultRooms.hpp"
 
-// Blank state
-Bedroom::Bedroom(): RoomType(INVALID_ROOM_ID, 2, false) {}
-Apartment::Apartment(): RoomType(INVALID_ROOM_ID, 4, false) {}
-Restaurant::Restaurant(): RoomType(INVALID_ROOM_ID, 0, true) {}
-ConferenceRoom::ConferenceRoom(): RoomType(INVALID_ROOM_ID, 0, true) {}
-
-Bedroom::Bedroom(const size_t id): RoomType(id, 2, false) {}
-Apartment::Apartment(const size_t id): RoomType(id, 4, false) {}
-Restaurant::Restaurant(const size_t id, const size_t availableSpace): RoomType(id, availableSpace, true) {}
-ConferenceRoom::ConferenceRoom(const size_t id, const size_t availableSpace, const ConferenceRoomFeatures& features): 
-    RoomType(id, availableSpace, true) {
-
-    this->features.hasProjector = features.hasProjector;
-    this->features.hasScene = features.hasScene;
+void BedRoom::read(std::istream& in) {
+    in >> id;
 }
-bool ConferenceRoom::checkAdditionalFeatures(const ConferenceRoomFeatures& features) const {
-    bool valid = true;
-    if (features.hasProjector) valid = valid and this->features.hasProjector;
-    if (features.hasScene) valid = valid and this->features.hasScene;
-    return valid;
+
+void BedRoom::write(std::ostream& out) {
+    out << "Bedroom #" << id << " : " << usedSpace << "/" << availableSpace << std::endl; 
+}
+
+void Apartment::read(std::istream& in) {
+    in >> id;
+}
+
+void Apartment::write(std::ostream& out) {
+    out << "Apartment #" << id << " : " << usedSpace << "/" << availableSpace << std::endl; 
+}
+
+void Restaurant::read(std::istream& in) {
+    in >> id >> availableSpace;
+}
+
+void Restaurant::write(std::ostream& out) {
+    out << "Restaurant #" << id << " : " << usedSpace << "/" << availableSpace << std::endl; 
+}
+
+void ConferenceRoom::read(std::istream& in) {
+    in >> id >> availableSpace;
+    size_t featuresCount;
+    in >> featuresCount;
+    for (size_t i = 0; i < featuresCount; ++i) {
+        std::string feature;
+        in >> feature;
+        features.insert(feature);
+    }
+}
+
+void ConferenceRoom::write(std::ostream& out) {
+    out << "Conference room #" << id << " : " << usedSpace << "/" << availableSpace << std::endl;
+    out << "Features: " << std::endl;
+    for (auto it: features) {
+        out << " - " << it << std::endl;
+    }
 }

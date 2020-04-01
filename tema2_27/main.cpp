@@ -1,13 +1,14 @@
 #include "DefaultRooms.hpp"
 #include <iostream>
+#include <memory>
 
 using namespace std;
 
 int main() {
-    auto *c = new ConferenceRoom(0, 100, {.hasProjector = false, .hasScene = true});
-    cout << c->checkAdditionalFeatures({.hasProjector = true, .hasScene = false}) << endl;
-    cout << c->checkAdditionalFeatures({.hasProjector = false, .hasScene = false}) << endl;
-    cout << c->checkAdditionalFeatures({.hasProjector = false, .hasScene = true}) << endl;
+    shared_ptr<RoomType> c = make_shared<ConferenceRoom>(ConferenceRoom(0, 100, {"test", "test1"}));
+    cout << c << endl;
+    auto d = c;
+    cout << d << endl;
 
     return 0;
 }
