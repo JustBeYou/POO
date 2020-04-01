@@ -21,12 +21,15 @@ class RoomType {
     void free();
     bool isFree() const;
     size_t getId() const;
+    size_t getAvailableSpace() const;
+    const std::set<std::string>& getFeatures() const;
     RoomType& operator=(const RoomType& rhs);
 
     bool checkAdditionalFeatures(const std::vector<std::string>& features) const;
 
-    virtual void read(std::istream& in) = 0;
-    virtual void write(std::ostream& out) = 0;
+    virtual void read(std::istream& in);
+    virtual void write(std::ostream& out);
+    virtual RoomType* clone() const;
 
     friend std::ostream& operator<<(std::ostream& out, RoomType& rhs);
     friend std::istream& operator>>(std::istream& in, RoomType& rhs); 

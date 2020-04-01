@@ -16,7 +16,7 @@ class ServiceManager {
     size_t occupyRoom(size_t id);
 
     private:
-    std::vector<std::shared_ptr<RoomType>>& rooms;
+    std::vector<std::shared_ptr<RoomType>> rooms;
     size_t totalAvailableSpace;
     size_t totalUsedSpace;
     std::map<std::string, size_t> featuresCount;

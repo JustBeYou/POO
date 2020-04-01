@@ -102,3 +102,24 @@ std::istream& operator>>(std::istream& in, RoomType& rhs) {
     rhs.read(in);
     return in; 
 }
+
+size_t RoomType::getAvailableSpace() const {
+    return availableSpace;
+}
+
+const std::set<std::string>& RoomType::getFeatures() const {
+    return features;
+}
+
+void RoomType::read(std::istream& in) {
+    throw std::logic_error("Read should not be called in RoomType!");
+}
+
+void RoomType::write(std::ostream& out) {
+    throw std::logic_error("Write should not be called in RoomType!");
+}
+
+RoomType* RoomType::clone() const {
+    throw std::logic_error("Clone should not be called in RoomType!");
+    return nullptr;
+}
