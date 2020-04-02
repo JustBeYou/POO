@@ -9,6 +9,17 @@ ServiceManager::ServiceManager(const std::vector<std::shared_ptr<RoomType>>& roo
     init(rooms);
 }
 
+#include <iostream>
+ServiceManager::ServiceManager(const ServiceManager &other) {
+    //std::cout << "COPY!!!" << std::endl;
+    operator=(other);
+}
+
+ServiceManager& ServiceManager::operator=(const ServiceManager& other) {
+    init(other.rooms);
+    return *this;
+}
+
 //#include <iostream>
 
 void ServiceManager::init(const std::vector<std::shared_ptr<RoomType>>& rooms) {

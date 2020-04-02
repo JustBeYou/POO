@@ -13,6 +13,8 @@ class ServiceManager {
     public:
     ServiceManager();
     ServiceManager(const std::vector<std::shared_ptr<RoomType>>& rooms);
+    ServiceManager(const ServiceManager &other);
+    ServiceManager& operator=(const ServiceManager& other);
     bool checkIfSeemsAvailable(const size_t requestedSpace, const std::vector<std::string>& features) const;
     
     bool checkIfRoomIsUsable(FreeRoomIter& room, size_t request, const std::vector<std::string>& features) const;

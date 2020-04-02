@@ -12,19 +12,20 @@ int main() {
 
     Hotel hotel;
     in >> hotel;
-    //cout << hotel;
 
     size_t commands;
     in >> commands;
     for (size_t i = 0; i < commands; ++i) {
         string action;
         in >> action;
+        cout << action << endl;
 
         if (action == "BOOKING") {
             size_t days, services;
             in >> days >> services;
 
-            BookingsCotainer requestedServices;
+            BookingCotainer requestedServices;
+            requestedServices.days = days;
             for (size_t j = 0; j < services; ++j) {
                 string serviceName;
                 size_t people, featuresCount;
@@ -37,13 +38,22 @@ int main() {
                     features.push_back(featureName);
                 }
 
-                requestedServices[serviceName] = {people, days, features};
+                requestedServices.services[serviceName] = {people, features};
+            }
+
+            const Booking &b = hotel.book(requestedServices);
+            if (b.id == INVALID_BOOKING_ID) {
+                cout << "Couldn't book this year :(" << endl;
+            } else {
+                
             }
         } else if (action == "CANCEL") {
             size_t reservationId;
             in >> reservationId;
         }
     }
+
+    //cout << hotel;
 
     return 0;
 }
