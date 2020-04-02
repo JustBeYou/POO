@@ -1,4 +1,5 @@
 #include "DefaultRooms.hpp"
+#include <stdexcept>
 
 void BedRoom::read(std::istream& in) {
     in >> id;
@@ -57,4 +58,18 @@ void ConferenceRoom::write(std::ostream& out) {
 
 RoomType* ConferenceRoom::clone() const {
     return new ConferenceRoom(*this);
+}
+
+std::shared_ptr<RoomType> DefaultRoomFactory::operator()(const std::string& type) const {
+    if (type == "BEDROOM") {
+        return std::make_shared<BedRoom>(INVALID_ROOM_ID);
+    } else if (type == "APARTMENT") {
+        return std::make_shared<Apartment>(INVALID_ROOM_ID);
+    } else if (type == "RESTAURANT") {
+        return std::make_shared<Restaurant>(INVALID_ROOM_ID, 0);
+    } else if (type == "CONFERENCE_ROOM") {
+        return std::make_shared<ConferenceRoom>(INVALID_ROOM_ID, 0);
+    }
+
+    throw std::runtime_error("Unknown room type!");
 }

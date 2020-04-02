@@ -2,6 +2,7 @@
 
 #include "RoomType.hpp"
 #include <cstddef>
+#include <memory>
 
 class NonSplittableRoom: public RoomType {
     public:
@@ -48,7 +49,14 @@ class ConferenceRoom: public FeaturesRoom {
     public:
     ConferenceRoom(size_t id, size_t availableSpace, std::vector<std::string> features): 
         FeaturesRoom(id, availableSpace, features) {}
+    ConferenceRoom(size_t id, size_t availableSpace): 
+        FeaturesRoom(id, availableSpace, {}) {}
     RoomType* clone() const;
     void read(std::istream& in);
     void write(std::ostream& out);
+};
+
+class DefaultRoomFactory {
+    public:
+    std::shared_ptr<RoomType> operator()(const std::string& type) const;
 };
