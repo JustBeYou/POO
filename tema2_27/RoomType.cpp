@@ -62,6 +62,13 @@ bool RoomType::isFree() const {
     return usedSpace == 0;
 }
 
+bool RoomType::isFree(size_t request) const {
+    checkInvalidState();
+    if (splittable and request + usedSpace <= availableSpace) return true;
+    if (not splittable and isFree()) return true;
+    return false;
+}
+
 size_t RoomType::getId() const {
     checkInvalidState();
     return id;
@@ -122,4 +129,8 @@ void RoomType::write(std::ostream& out) {
 RoomType* RoomType::clone() const {
     throw std::logic_error("Clone should not be called in RoomType!");
     return nullptr;
+}
+
+bool RoomType::isSplittable() const {
+    return splittable;
 }

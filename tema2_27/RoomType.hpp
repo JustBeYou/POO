@@ -20,6 +20,8 @@ class RoomType {
     void occupy();
     void free();
     bool isFree() const;
+    bool isFree(size_t request) const;
+    bool isSplittable() const;
     size_t getId() const;
     size_t getAvailableSpace() const;
     const std::set<std::string>& getFeatures() const;
