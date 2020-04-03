@@ -19,10 +19,12 @@ class ServiceManager {
     
     bool checkIfRoomIsUsable(FreeRoomIter& room, size_t request, const std::vector<std::string>& features) const;
     FreeRoomIter getFreeRoomEnd() const;
-    FreeRoomIter getRoom(size_t id) const;
+    FreeRoomIter getFreeRoomById(size_t id) const;
     FreeRoomIter getFreeRoomIter() const;
     void occupyRoom(FreeRoomIter& room);
     void occupyRoom(FreeRoomIter& room, size_t request);
+    void freeRoom(size_t id);
+    void freeRoom(size_t id, size_t request);
     std::string getName() const;
 
     friend std::istream& operator>>(std::istream& in, ServiceManager& manager);

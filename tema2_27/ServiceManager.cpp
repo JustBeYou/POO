@@ -48,15 +48,15 @@ bool ServiceManager::checkIfSeemsAvailable(const size_t requestedSpace, const st
 }
 
 ServiceManager::FreeRoomIter ServiceManager::getFreeRoomEnd() const {
-    return freeRooms.end();
+    return freeRooms.cend();
 }
 
-ServiceManager::FreeRoomIter ServiceManager::getRoom(size_t id) const {
-    for (FreeRoomIter it = freeRooms.begin(); it != freeRooms.end(); ++it) {
+ServiceManager::FreeRoomIter ServiceManager::getFreeRoomById(size_t id) const {
+    for (FreeRoomIter it = freeRooms.cbegin(); it != freeRooms.cend(); ++it) {
         if ((*it)->getId() == id) return it;
     }
 
-    return freeRooms.end();
+    return freeRooms.cend();
 }
 
 bool ServiceManager::checkIfRoomIsUsable(FreeRoomIter& room, size_t request, const std::vector<std::string>& features) const {
@@ -68,15 +68,70 @@ ServiceManager::FreeRoomIter ServiceManager::getFreeRoomIter() const {
 }
 
 void ServiceManager::occupyRoom(FreeRoomIter& room) {
+    size_t unusedSpace = (*room)->getUnusedSpace();
     (*room)->occupy();
+    
+    for (auto feature: (*room)->getFeatures()) {
+        featuresCount[feature].roomsCount -= 1;
+        featuresCount[feature].spaceCount -= unusedSpace;
+    }
+    totalAvailableSpace -= unusedSpace;
+    totalUsedSpace += unusedSpace;
+    
     freeRooms.erase(room);
 }
 
 void ServiceManager::occupyRoom(FreeRoomIter& room, size_t request) {
     (*room)->occupyBy(request);
+    totalAvailableSpace -= request;
+    totalUsedSpace += request;
+    for (auto feature: (*room)->getFeatures()) {
+        featuresCount[feature].spaceCount -= request;
+    }
+
     if ((*room)->isFree(1) == false) {
+        for (auto feature: (*room)->getFeatures()) {
+            featuresCount[feature].roomsCount -= 1;
+        }
         freeRooms.erase(room);
     }
+}
+
+void ServiceManager::freeRoom(size_t id) {
+    throw std::runtime_error("Not implemented!");
+}
+
+void ServiceManager::freeRoom(size_t id, size_t request) {
+    std::shared_ptr<RoomType> room = nullptr;
+    for (auto it = rooms.begin(); it != rooms.end(); ++it) {
+        if (id == (*it)->getId()) {
+            room = *it;
+            break;
+        }
+    }
+
+    if (room == nullptr) {
+        throw std::logic_error("Room not found!");
+    }
+
+    if (room->isFree(1)) {
+        room->freeBy(request);
+        for (auto feature: room->getFeatures()) {
+                featuresCount[feature].spaceCount += request;
+        }
+    } else {
+        room->freeBy(request);
+        if (room->isFree(1)) {
+            for (auto feature: room->getFeatures()) {
+                featuresCount[feature].spaceCount += request;
+                featuresCount[feature].roomsCount += 1;
+            }
+            freeRooms.push_back(room);
+        }
+    }
+
+    totalUsedSpace -= request;
+    totalAvailableSpace += request;
 }
 
 std::string ServiceManager::getName() const { 
