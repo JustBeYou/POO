@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#include <stdexcept>
 
 using namespace std;
 
@@ -19,6 +20,7 @@ int main() {
         string action;
         in >> action;
         cout << action << endl;
+        cout << "--------------------------------------------------------" << endl;
 
         if (action == "BOOKING") {
             size_t days, services;
@@ -41,19 +43,34 @@ int main() {
                 requestedServices.services[serviceName] = {people, features};
             }
 
-            const Booking &b = hotel.book(requestedServices);
-            if (b.id == INVALID_BOOKING_ID) {
-                cout << "Couldn't book this year :(" << endl;
-            } else {
-                
+            try {
+                const Booking &b = hotel.book(requestedServices);
+                if (b.id == INVALID_BOOKING_ID) {
+                    cout << "Couldn't book this year :(" << endl;
+                } else {
+                    cout << b;
+                }
+            } catch (std::logic_error& exp) {
+                cout << "Invalid action when booking." << endl;
+                cout << exp.what() << endl;
             }
         } else if (action == "CANCEL") {
-            size_t reservationId;
-            in >> reservationId;
+            try {
+                size_t bookingId;
+                in >> bookingId;
+                hotel.unbook(bookingId);
+                cout << "Booking " << bookingId << " was canceled." << endl;
+            } catch(std::logic_error& exp) {
+                cout << "Invalid action when cancelling a booking." << endl;
+                cout << exp.what() << endl;
+            }
         }
+
+        cout << "--------------------------------------------------------" << endl;
+        cout << endl;
     }
 
-    //cout << hotel;
+    cout << setHotelDay(10) << hotel;
 
     return 0;
 }
