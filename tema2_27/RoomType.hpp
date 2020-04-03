@@ -24,7 +24,9 @@ class RoomType {
     bool isSplittable() const;
     size_t getId() const;
     size_t getAvailableSpace() const;
+    size_t getUnusedSpace() const;
     const std::set<std::string>& getFeatures() const;
+    bool hasAnyFeature() const;
     RoomType& operator=(const RoomType& rhs);
 
     bool checkAdditionalFeatures(const std::vector<std::string>& features) const;

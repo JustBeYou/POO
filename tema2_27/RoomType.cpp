@@ -9,14 +9,14 @@ RoomType::RoomType():
     usedSpace(1),
     hasFeatures(false) {}
 
-RoomType::RoomType(const size_t id, const size_t availableSpace, const bool splitable):
+RoomType::RoomType(const size_t id, const size_t availableSpace, const bool splittable):
     id(id),
     availableSpace(availableSpace),
     splittable(splittable),
     usedSpace(0),
     hasFeatures(false) {}
 
-RoomType::RoomType(const size_t id, const size_t availableSpace, const bool splitable, const std::vector<std::string>& features):
+RoomType::RoomType(const size_t id, const size_t availableSpace, const bool splittable, const std::vector<std::string>& features):
     id(id),
     availableSpace(availableSpace),
     splittable(splittable),
@@ -78,6 +78,10 @@ void RoomType::checkInvalidState() const {
     if (id == INVALID_ROOM_ID) throw std::logic_error("Object is not initialized properly.");
 }
 
+bool RoomType::hasAnyFeature() const {
+    return hasFeatures;
+}
+
 bool RoomType::checkAdditionalFeatures(const std::vector<std::string>& features) const {
     if (not hasFeatures) throw std::logic_error("No additional features.");
     for (auto it: features) {
@@ -112,6 +116,10 @@ std::istream& operator>>(std::istream& in, RoomType& rhs) {
 
 size_t RoomType::getAvailableSpace() const {
     return availableSpace;
+}
+
+size_t RoomType::getUnusedSpace() const {
+    return availableSpace - usedSpace;
 }
 
 const std::set<std::string>& RoomType::getFeatures() const {
