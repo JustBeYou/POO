@@ -4,16 +4,19 @@
 #include <string>
 #include <map>
 #include <list>
+#include <utility>
 #include "ServiceManager.hpp"
 
 #define INVALID_BOOKING_ID 0
 
 struct Booking {
     size_t id;
-    std::map<std::string, std::list<size_t>> services; // each service has a list of room ids
+    std::map<std::string, std::list<std::pair<size_t, size_t>>> services; // each service has a list of room ids
     size_t days;
     size_t startDay;
 };
+
+std::ostream& operator<<(std::ostream& out, const Booking& booking);
 
 
 struct BookingOptions {
@@ -45,3 +48,10 @@ class Hotel {
     std::map<size_t, Booking> bookings;
 
 };
+
+struct HotelShowDay {
+    size_t day;
+};
+
+HotelShowDay setHotelDay(size_t day);
+std::ostream& operator<<(std::ostream& out, HotelShowDay obj);
