@@ -1,6 +1,16 @@
 Hotel Management System
 ===
-Sample output for `hotel.txt`:
+## Documentatie
+Cerinta a fost sa se scrie un program de management pentru rezervari intr-un hotel. Pot exista mai multe tipuri de camere si servicii pe care le pot solicita clientii. Se suporta de asemenea anularea unei rezervari. Clasele sunt implementate intr-o maniera extensibila si generica, astfel se pot adauga tipuri noi de camere si servicii fara a modifica codul deja existent.
+
+Definim urmatoarele entitati:
+1. Camera reprezentata de clasa de baza `RoomType` - aceasta implementeaza functionalitatile generale ale oracarei camere, de exemplu: verificarea daca este libera, daca se poate imparti sau nu, locurile disponibile, ocuparea/eliberarea locurilor, afisarea continutului. Din aceasta clasa s-au mostenit clase precum `BedRoom`, `Apartment` sau `Restaurant` si s-au utilizat metode virtuale pentru implementarea comportamentului specific (de exemplu metoda `write` pentru afisare sau metoda `clone` pentru copierea unui obiect). De asemenea, orice camera contine o lista de dotari, aceasta fiind stocata intr-un container STL de tip `set`.
+2. Un serviciu oferit de hotel este reprezentat de un set de camere cu anumite dotari. Pentru aceasta, avem clasa `ServiceManager` care se ocupa de management-ul mai multor camere diferite, dar care apartin aceluiasi serviciu. Managerul permite interactionarea cu camerele prin ocuparea sau eliberarea lor dar si o serie de interogari despre capacitatile disponibile. Camere sunt tinute in mai multe containere specializate pentru a eficientiza operatiile. (de exemplu lista pentru camerele goale, hashmap pentru dotarile disponibile totale, etc). Ca exemplu concret avem serviciul `BREAKFAST` pe care l-ar putea solicita un client, deci vom avea un `ServiceManager` cu numele corespunzator care se va ocupa de o serie de camere de tip `Restaurant`.
+3. Hotelul se ocupa de evidenta tuturor serviciilor implementand algoritmul de rezervare/eliberare a camerelor. Clasa `Hotel` retine un vector de zile, fiecare zi avand o copie a intregii situatii a hotelului (toate `ServiceManager`-ele, respectiv camerele lor). Algoritmul de ocupare este in mare parte naiv cu mici optimizari deoarece pare a fi o problema din clasa NP. 
+
+Mai jos se observa un exemplu de output pentru cererile din fisierul `hotel.txt`.
+
+## Sample output for `hotel.txt`:
 ```
 BOOKING
 --------------------------------------------------------
